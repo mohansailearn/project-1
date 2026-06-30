@@ -1,0 +1,35 @@
+#Playbook to deploy into multiple qaservers
+---
+- name: Setup the microservices app as containers on all the qaservers
+  hosts: all
+  tasks:
+    - name: Deploy the python voting app
+      docker_container:
+        image: "{{item.a}}"
+        name: "{{item.b}}"
+        ports:
+          - "{{item.c}}"
+      with_items:
+        - {a: intelliqit/votingapp,b: votingapp,c: "5050:80"}
+        - {a: intelliqit/resultapp,b: resultapp,c: "6060:80"}
+
+    - name: Deploy the im memory db using redis and postgres
+      docker_container:
+        image: "{{item.a}}"
+        name: "{{item.b}}"
+      with_items:
+        - {a: redis,b: redis}
+        - {a: intelliqit/workerapp,b: worker}
+
+
+    - name: Deploy the persistent db using postgres
+      docker_container:
+        image: postgres
+        name: mydb
+        env:
+         POSTGRES_PASSWORD: intelliqit
+         POSTGRES_USER: myuser
+         POSTGRES_DB: mydb
+
+...
+
