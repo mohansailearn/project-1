@@ -1,0 +1,10 @@
+---
+- name: install docker on a;; the qaseerver
+  hosts: all
+  tasks: 
+   - name: dowloading and running the shell script
+     shell: "{{item}}"
+     with_items: 
+       - curl -fsSL https://get.docker.com -o install-docker.sh
+       - sudo sh install-docker.sh
+...
